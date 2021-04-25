@@ -2,7 +2,7 @@
   <div id="app" :class="typeof weather.main != 'undefined' && weather.main.temp > 16 ? 'warm' : ''">
     <main>
       <div class="search-box">
-        <input type="text" class="search-bar" placeholder="Search..." v-model="query" @keypress="fetchWeather"
+        <input type="text" class="search-bar" placeholder="Search..." v-model="query" @keyup.enter="fetchWeather"
         />
       </div>
 
@@ -24,7 +24,7 @@
 <script>
 export default {
   name: 'app',
-  data () {
+  data() {
     return {
       api_key: 'd421b65e7d6d0157e6171cffcef18cb2',
       url_base: 'https://api.openweathermap.org/data/2.5/',
@@ -33,18 +33,19 @@ export default {
     }
   },
   methods: {
-    fetchWeather (e) {
-      if (e.key === "Enter") {
-        fetch(`${this.url_base}weather?q=${this.query}&units=metric&APPID=${this.api_key}`)
+    fetchWeather() {
+      fetch(`${this.url_base}weather?q=${this.query}&units=metric&APPID=${this.api_key}`)
           .then(res => {
             return res.json();
           }).then(this.setResults);
-      }
     },
-    setResults (results) {
+    setResults(results) {
+      if (results.cod === "400"){
+        // TODO handle exceptions
+      }
       this.weather = results;
     },
-    dateBuilder () {
+    dateBuilder() {
       let d = new Date();
       let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -103,7 +104,7 @@ main {
   font-size: 20px;
 
   appearance: none;
-  border:none;
+  border: none;
   outline: none;
   background: none;
 
@@ -147,7 +148,7 @@ main {
   font-weight: 900;
 
   text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
-  background-color:rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.25);
   border-radius: 16px;
   margin: 30px 0;
 
